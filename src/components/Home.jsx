@@ -15,7 +15,10 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
+//
+import Def from "./Def";
 
+//
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -55,15 +58,40 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
+//////
+
 //////////////////////////////
 export default function Home() {
   const [searchWord, setSearchWord] = useState("prerogative");
-
+  const [searchResult, setSearchResult] = useState("");
+  ////////////
   const handleSearchWord = (event) => {
     setSearchWord(event.target.value);
+    renderSearch();
   };
   console.log(searchWord);
-
+  //
+  function renderSearch(searchWord) {
+    const apiKey = "4b1af027-4755-46c5-a06a-66de442e4bd7";
+    fetch(
+      `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${searchWord}?key=${apiKey}`
+    )
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          console.log(result);
+          setSearchResult(result);
+        },
+        // Note: it's important to handle errors here
+        // instead of a catch() block so that we don't swallow
+        // exceptions from actual bugs in components.
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+  ////
+  /////
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -82,11 +110,9 @@ export default function Home() {
     setAnchorEl(null);
     handleMobileMenuClose();
   };
-
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -162,85 +188,89 @@ export default function Home() {
   );
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
-          >
-            WordSTOCK
-          </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ "aria-label": "search" }}
-              onChange={handleSearchWord}
-              value={searchWord}
-            />
-          </Search>
-          <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
+    <div>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar>
             <IconButton
               size="large"
-              aria-label="show 4 new mails"
+              edge="start"
               color="inherit"
+              aria-label="open drawer"
+              sx={{ mr: 2 }}
             >
-              <Badge badgeContent={4} color="error">
-                <MailIcon />
-              </Badge>
+              <MenuIcon />
             </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ display: { xs: "none", sm: "block" } }}
             >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </Box>
-          <Box sx={{ display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
-    </Box>
+              WordSTOCK
+            </Typography>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ "aria-label": "search" }}
+                onChange={handleSearchWord}
+                value={searchWord}
+              />
+            </Search>
+            <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ display: { xs: "none", md: "flex" } }}>
+              <IconButton
+                size="large"
+                aria-label="show 4 new mails"
+                color="inherit"
+              >
+                <Badge badgeContent={4} color="error">
+                  <MailIcon />
+                </Badge>
+              </IconButton>
+              <IconButton
+                size="large"
+                aria-label="show 17 new notifications"
+                color="inherit"
+              >
+                <Badge badgeContent={17} color="error">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              <IconButton
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+            </Box>
+            <Box sx={{ display: { xs: "flex", md: "none" } }}>
+              <IconButton
+                size="large"
+                aria-label="show more"
+                aria-controls={mobileMenuId}
+                aria-haspopup="true"
+                onClick={handleMobileMenuOpen}
+                color="inherit"
+              >
+                <MoreIcon />
+              </IconButton>
+            </Box>
+          </Toolbar>
+        </AppBar>
+        {renderMobileMenu}
+        {renderMenu}
+      </Box>
+
+      <Def search={searchResult} />
+    </div>
   );
 }
