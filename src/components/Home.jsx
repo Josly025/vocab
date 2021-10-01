@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -63,15 +63,15 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 //////////////////////////////
 export default function Home() {
   const [searchWord, setSearchWord] = useState("prerogative");
-  const [searchResult, setSearchResult] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
   ////////////
   const handleSearchWord = (event) => {
     setSearchWord(event.target.value);
-    renderSearch();
   };
   console.log(searchWord);
   //
-  function renderSearch(searchWord) {
+
+  useEffect(() => {
     const apiKey = "4b1af027-4755-46c5-a06a-66de442e4bd7";
     fetch(
       `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${searchWord}?key=${apiKey}`
@@ -79,8 +79,8 @@ export default function Home() {
       .then((res) => res.json())
       .then(
         (result) => {
-          console.log(result);
-          setSearchResult(result);
+          console.log(result[0]);
+          setSearchResult(result[0]);
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
@@ -89,7 +89,7 @@ export default function Home() {
           console.log(error);
         }
       );
-  }
+  }, [searchWord]);
   ////
   /////
   const [anchorEl, setAnchorEl] = React.useState(null);
